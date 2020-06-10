@@ -1,6 +1,6 @@
 # DataWeave Lookup
 
-This repository contains a simple MuleSoft application flow that replicates a simple supplied example.
+An example Mule application that uses DataWeave to perform static lookups.
 
 ## Walkthrough
 
