@@ -1,0 +1,22 @@
+[
+ {
+ "SalesAreaList": [
+ {
+ "Id": "",
+ "GC_SalesOrg": "",
+ "GC_SalesManager": "",
+ "BR_DivisionActivitySector": "",
+ "BR_CompanyClass": ""
+ }
+ ],
+ "Id": "",
+ "GC_SAPID": "",
+ "GC_SAPCode": "",
+ "GC_DeletionFlag": "",
+ "GC_CreationStatus": "",
+ "BR_TicketOption": "",
+ "BR_LegalName": "",
+ "BR_Email": "",
+ "BR_DocumentNumber": ""
+ }
+]

@@ -1,0 +1,18 @@
+<root>
+	<SalesAreaList>
+		<Id></Id>
+		<GC_SalesOrg></GC_SalesOrg>
+		<GC_SalesManager></GC_SalesManager>
+		<BR_DivisionActivitySector></BR_DivisionActivitySector>
+		<BR_CompanyClass></BR_CompanyClass>
+	</SalesAreaList>
+	<Id></Id>
+	<GC_SAPID></GC_SAPID>
+	<GC_SAPCode></GC_SAPCode>
+	<GC_DeletionFlag></GC_DeletionFlag>
+	<GC_CreationStatus></GC_CreationStatus>
+	<BR_TicketOption></BR_TicketOption>
+	<BR_LegalName></BR_LegalName>
+	<BR_Email></BR_Email>
+	<BR_DocumentNumber></BR_DocumentNumber>
+</root>

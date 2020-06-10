@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="request-mapping-test.xml" />
+	<munit:test name="GC_CreationStatusMap_Created" doc:id="2484afb5-376d-4a2e-8593-800c53fa73dc" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="715ac55c-c1f9-4136-837f-20a8d0d5e148" >
+				<munit:payload value='[
+ {
+ "SalesAreaList": [
+ {
+ "Id": "",
+ "GC_SalesOrg": "",
+ "GC_SalesManager": "",
+ "BR_DivisionActivitySector": "",
+ "BR_CompanyClass": ""
+ }
+ ],
+ "Id": "",
+ "GC_SAPID": "",
+ "GC_SAPCode": "",
+ "GC_DeletionFlag": "",
+ "GC_CreationStatus": "created",
+ "BR_TicketOption": "",
+ "BR_LegalName": "",
+ "BR_Email": "",
+ "BR_DocumentNumber": ""
+ }
+]' mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="requestMapping" doc:id="ea0ef6c6-8237-42ed-84ba-8564ea6ebf68" name="requestMappingFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert GC_CreationStatus" doc:id="601974ab-1b24-4471-a48e-4b96145cecdd" actual="#[output application/java
+---
+payload.root.GC_CreationStatus]" expected="GC_CREATE"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="GC_CreationStatusMap_Updated" doc:id="bf88295e-ea37-4824-8605-4570fa1cc62a" description="Test">
+			<munit:execution>
+				<munit:set-event doc:name="Set Event" doc:id="644c2618-fad1-43a5-b86c-39ca42097361">
+				<munit:payload value='[
+ {
+ "SalesAreaList": [
+ {
+ "Id": "",
+ "GC_SalesOrg": "",
+ "GC_SalesManager": "",
+ "BR_DivisionActivitySector": "",
+ "BR_CompanyClass": ""
+ }
+ ],
+ "Id": "",
+ "GC_SAPID": "",
+ "GC_SAPCode": "",
+ "GC_DeletionFlag": "",
+ "GC_CreationStatus": "updated",
+ "BR_TicketOption": "",
+ "BR_LegalName": "",
+ "BR_Email": "",
+ "BR_DocumentNumber": ""
+ }
+]' mediaType="application/json" />
+				</munit:set-event>
+				<flow-ref doc:name="requestMapping" doc:id="ec8b5b08-1c9b-40a7-b7e7-b03146808054" name="requestMappingFlow" />
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals doc:name="Assert GC_CreationStatus" doc:id="7573b0c6-5b67-4e9b-bfe3-22bd75273c69" actual="#[output application/java
+---
+payload.root.GC_CreationStatus]" expected="GC_MODIFY" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="GC_DeletionFlag_Default" doc:id="684ed7e9-6826-492a-9841-7191dc186ea6" description="Test">
+			<munit:execution>
+				<munit:set-event doc:name="Set Event" doc:id="82af982b-434a-47dd-b329-ace51ccb168b">
+				<munit:payload value='[
+ {
+ "SalesAreaList": [
+ {
+ "Id": "",
+ "GC_SalesOrg": "",
+ "GC_SalesManager": "",
+ "BR_DivisionActivitySector": "",
+ "BR_CompanyClass": ""
+ }
+ ],
+ "Id": "",
+ "GC_SAPID": "",
+ "GC_SAPCode": "",
+ "GC_DeletionFlag": "unknown",
+ "GC_CreationStatus": "",
+ "BR_TicketOption": "",
+ "BR_LegalName": "",
+ "BR_Email": "",
+ "BR_DocumentNumber": ""
+ }
+]' mediaType="application/json" />
+				</munit:set-event>
+				<flow-ref doc:name="requestMappingFlow" doc:id="8ea4834e-7a9b-4e70-acb4-a0b2b05ef1f1" name="requestMappingFlow" />
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals doc:name="Assert GC_DeletionFlag" doc:id="1ee2c7f0-8626-424a-9c88-d229a1470d97" actual="#[output application/java
+---
+payload.root.GC_DeletionFlag]" expected="0" />
+			</munit:validation>
+		</munit:test>
+
+</mule>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:sap="http://www.mulesoft.org/schema/mule/sap" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sap http://www.mulesoft.org/schema/mule/sap/current/mule-sap.xsd">
+    <http:listener-config name="yara-example-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="dw-example-config" api="resource::1af1a986-b752-4254-a3a3-fccb7468d290:yara-example:1.0.0:raml:zip:yara-example.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c8fec6e1-dec3-470a-8ec6-4f6b5a9ac00d" />
+	<flow name="dataweave-mapping-example-main">
+        <http:listener config-ref="yara-example-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="dw-example-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="dataweave-mapping-example-console">
+        <http:listener config-ref="yara-example-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="dw-example-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="post:\account:application\json:dataweave-mapping-example-config" doc:id="5550f587-d7c0-430e-9b57-19a5daf92691">
+        <set-variable value="#[payload.Id]" doc:name="Save Salesforce ID" doc:id="76149caa-2a87-49dd-8f1a-a6fa5aadc3e2" variableName="salesforce_id"/>
+		<flow-ref doc:name="Request Mapping" doc:id="c0f05ba4-be02-468f-9a83-146d469f3b92" name="requestMappingFlow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b6be1172-d281-46d0-a7eb-ecd8fef9fb5d" message="Call SAP"/>
+		<ee:transform doc:name="SAP Placeholder" doc:id="be34cf10-a1f3-4dab-bcd1-c40e1f2a2505" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	root: {
+		GC_SAPCode: payload.GC_SAPCode,
+		GC_IntegrationErrorMessage: null,
+		GC_CreationStatus: payload.GC_CreationStatus,
+		GC_TECH_Code: null,
+		GC_TECH_Group: null,
+		GC_TECH_Log: null,
+		BR_IntegrationSAPErrorMessage: null,
+		GC_TECH_Object: null,
+		GC_TECH_RecordId: null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Response Mapping" doc:id="37abfdc8-c387-4ebd-9ae8-ac76069dea0c" name="responseMappingFlow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0eb3cdd9-4a71-494c-87a6-35608d88d5ca" message="#[message]"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="02c8c59a-3566-4471-8f06-fb478c33490b" type="ANY">
+				<logger level="ERROR" doc:name="Logger" doc:id="b7834eb1-4f4c-4722-ae1a-345c061e1ba3" message="#[message]"/>
+				<set-payload doc:name="Set Payload" doc:id="d27d5d6f-1d83-43fe-982c-c489ca590843" value='#[message: "An error occurred"]' mimeType="application/json"/>
+			</on-error-propagate>
+		</error-handler>
+    </flow>
+	<flow name="requestMappingFlow" doc:id="c28407b0-962b-4669-bb66-6c8bce198ead" >
+		<ee:transform doc:name="Transform Message" doc:id="2f8d2de3-ef5a-4671-a4ee-1700b4c18e43">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+import GC_CreationStatusMap from maps::GC_CreationStatusMap
+import GC_DeletionFlagMap from maps::GC_DeletionFlagMap
+output application/xml
+---
+{
+	root: payload map {
+		SalesAreaList: {
+			Id: $.SalesAreaList.Id,
+			GC_SalesOrg: $.SalesAreaList.GC_SalesOrg,
+			GC_SalesManager: $.SalesAreaList.GC_SalesManager,
+			BR_DivisionActivitySector: $.SalesAreaList.BR_DivisionActivitySector,
+			BR_CompanyClass: $.SalesAreaList.BR_CompanyClass
+		},
+		Id: $.Id,
+		GC_SAPID: $.GC_SAPID,
+		GC_SAPCode: $.GC_SAPCode,
+		GC_DeletionFlag: GC_DeletionFlagMap[$.GC_DeletionFlag] default "0",
+		GC_CreationStatus: GC_CreationStatusMap[$.GC_CreationStatus],
+		BR_TicketOption: $.BR_TicketOption,
+		BR_LegalName: $.BR_LegalName,
+		BR_Email: lower($.BR_Email),
+		BR_DocumentNumber: $.BR_DocumentNumber
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="be726813-12d3-4cf9-b0ce-18c99d0d0dbc" message="#[payload]"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7c18fdb8-d47a-436a-9438-c16454a79e55" >
+				<logger level="WARN" doc:name="Logger" doc:id="69c82b53-14e1-4dd2-a7c5-88982cd91c05" message="Request mapping failed, but continuing action"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="responseMappingFlow" doc:id="1bba4325-ad45-49c0-a61b-d2dc30a013f5" >
+		<ee:transform doc:name="Transform Message" doc:id="438946b8-1eb3-41c9-bdc0-86903384db3d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.root]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="861a6618-7375-4f39-872b-0619c41215d3" message="#[payload]"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0435e626-e021-468f-815b-61e25e4014b6" >
+				<logger level="WARN" doc:name="Logger" doc:id="f2abe441-451a-4ee9-94bf-b239dc78569d" message="Response mapping failed, but continuing action"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
