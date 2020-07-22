@@ -1,0 +1,90 @@
+#%RAML 1.0
+title: dataweave-mapping-example
+
+types:
+  request:
+    type: array
+    items:
+      properties:
+        SalesAreaList:
+          type: array
+          items:
+            properties:
+              Id: string
+              GC_SalesOrg: string
+              GC_SalesManager: string
+              BR_DivisionActivitySector: string
+              BR_CompanyClass: string
+        Id: string
+        GC_SAPID: string
+        GC_SAPCode: string
+        GC_DeletionFlag: string
+        GC_CreationStatus: string
+        BR_TicketOption: string
+        BR_LegalName: string
+        BR_Email: string
+        BR_DocumentNumber: string
+    example: |
+      [
+        {
+          "SalesAreaList": [
+            {
+            "Id": "",
+            "GC_SalesOrg": "",
+            "GC_SalesManager": "",
+            "BR_DivisionActivitySector": "",
+            "BR_CompanyClass": ""
+            }
+          ],
+          "Id": "",
+          "GC_SAPID": "",
+          "GC_SAPCode": "",
+          "GC_DeletionFlag": "",
+          "GC_CreationStatus": "",
+          "BR_TicketOption": "",
+          "BR_LegalName": "",
+          "BR_Email": "",
+          "BR_DocumentNumber": ""
+        }
+      ]
+
+  response:
+    type: array
+    items:
+      properties:
+        GC_SAPCode: string
+        GC_SAPID: string
+        GC_IntegrationErrorMessage: string
+        GC_CreationStatus: string
+        GC_TECH_Code: string
+        GC_TECH_Group: string
+        GC_TECH_Log: string
+        BR_IntegrationSAPErrorMessage: string
+        GC_TECH_Object: string
+        GC_TECH_RecordId: string
+    example: |
+      [
+        {
+          "GC_SAPCode": "",
+          "GC_SAPID": "",
+          "GC_IntegrationErrorMessage": "",
+          "GC_CreationStatus": "",
+          "GC_TECH_Code": "",
+          "GC_TECH_Group": "",
+          "GC_TECH_Log": "",
+          "BR_IntegrationSAPErrorMessage": "",
+          "GC_TECH_Object": "",
+          "GC_TECH_RecordId": ""
+        }
+      ]
+
+/account:
+  post:
+    body:
+      application/json:
+        type: request
+    responses:
+      200:
+        body:
+          application/json:
+            type: response

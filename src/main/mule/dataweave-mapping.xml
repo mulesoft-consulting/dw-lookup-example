@@ -5,7 +5,11 @@ http://www.mulesoft.org/schema/mule/sap http://www.mulesoft.org/schema/mule/sap/
     <http:listener-config name="yara-example-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="dw-example-config" api="resource::1af1a986-b752-4254-a3a3-fccb7468d290:yara-example:1.0.0:raml:zip:yara-example.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="dw-example-config" api="api/dataweave-example.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" >
+		<apikit:flow-mappings >
+			<apikit:flow-mapping resource="/account" action="post" content-type="application/json" flow-ref="post:\account:application\json:dataweave-mapping-example-config" />
+		</apikit:flow-mappings>
+	</apikit:config>
     <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c8fec6e1-dec3-470a-8ec6-4f6b5a9ac00d" />
 	<flow name="dataweave-mapping-example-main">
         <http:listener config-ref="yara-example-httpListenerConfig" path="/api/*">
